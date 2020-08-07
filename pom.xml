@@ -49,10 +49,6 @@
 				defaults (may be moved to parent pom) -->
 			<plugins>
 				<!-- clean lifecycle, see https://maven.apache.org/ref/current/maven-core/lifecycles.html#clean_Lifecycle -->
-<<<<<<< HEAD
-=======
-
->>>>>>> 9a9dd936ca4346f37da114432dad8a38a6379d0e
 				<plugin>
 					<artifactId>maven-clean-plugin</artifactId>
 					<version>3.1.0</version>
@@ -100,11 +96,7 @@
 							<!-- add Main-Class to manifest file -->
 							<transformer
 								implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-<<<<<<< HEAD
 								<mainClass>io.zeebe.zeebe_get_started_client.App</mainClass>
-=======
-								<mainClass>io.zeebe.zeebe_get_started_java_client.App</mainClass>
->>>>>>> 9a9dd936ca4346f37da114432dad8a38a6379d0e
 							</transformer>
 						</transformers>
 					</configuration>
