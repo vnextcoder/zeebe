@@ -29,8 +29,12 @@ public class App {
 		final int version = deployment.getWorkflows().get(0).getVersion();
 		System.out.println("Workflow deployed. Version: " + version);
 
-		//final WorkflowInstanceEvent wfInstance = client.newCreateInstanceCommand().bpmnProcessId("order-process")
-			//	.latestVersion().send().join();
+
+		final DeploymentEvent deployment2 = client.newDeployCommand().addResourceFromClasspath("cancel-process.bpmn")
+				.send().join();
+
+		final int version2 = deployment2.getWorkflows().get(0).getVersion();
+		System.out.println("Cancellation Workflow deployed. Version: " + version2);
 
 		
 
@@ -92,6 +96,37 @@ public class App {
 			jobClient.newCompleteCommand(job.getKey()).variables(result).send().join();
 		}).fetchVariables("shippingReference").open();
 
+		
+		
+		/*
+		 * final WorkflowInstanceEvent wfCancellationInstance =
+		 * client.newCreateInstanceCommand().bpmnProcessId("Process_Cancellation")
+		 * .latestVersion().variables(data).send().join();
+		 * 
+		 * final long cancellationWorkflowInstanceKey =
+		 * wfCancellationInstance.getWorkflowInstanceKey();
+		 * System.out.println("Cancellation Workflow instance created. Key: " +
+		 * cancellationWorkflowInstanceKey);
+		 */		// ...
+
+		
+		
+		final JobWorker jobWorker4 = client.newWorker().jobType("Cancel_Order").handler((jobClient, job) -> {
+			final Map<String, Object> variables = job.getVariablesAsMap();
+
+			System.out.println("Process order: " + variables.get("orderId"));
+			double price = 46.50;
+			System.out.println("Collect money: $" + price);
+
+			// ...
+
+			final Map<String, Object> result = new HashMap<>();
+			result.put("totalPrice", price);
+
+			jobClient.newCompleteCommand(job.getKey()).variables(result).send().join();
+		}).fetchVariables("orderId").open();
+
+		
 		
 		client.close();
 		System.out.println("Closed.");

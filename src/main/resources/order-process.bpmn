@@ -19,6 +19,7 @@
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1l2elbn</bpmn:incoming>
       <bpmn:outgoing>Flow_10qk9eu</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1v070i0</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:sequenceFlow id="Flow_10qk9eu" sourceRef="Activity_1n1vox3" targetRef="Activity_1y0merv" />
     <bpmn:serviceTask id="Activity_1y0merv" name="Ship Parcel">
@@ -30,8 +31,18 @@
     </bpmn:serviceTask>
     <bpmn:endEvent id="Event_18wmc0n" name="Order Delivered">
       <bpmn:incoming>Flow_1rhlq0g</bpmn:incoming>
+      <bpmn:incoming>Flow_1qasi05</bpmn:incoming>
     </bpmn:endEvent>
     <bpmn:sequenceFlow id="Flow_1rhlq0g" sourceRef="Activity_1y0merv" targetRef="Event_18wmc0n" />
+    <bpmn:sequenceFlow id="Flow_1v070i0" sourceRef="Activity_1n1vox3" targetRef="Activity_0o0gbni" />
+    <bpmn:callActivity id="Activity_0o0gbni" name="Process Cancellation">
+      <bpmn:extensionElements>
+        <zeebe:calledElement processId="Process_Cancellation" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1v070i0</bpmn:incoming>
+      <bpmn:outgoing>Flow_1qasi05</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:sequenceFlow id="Flow_1qasi05" sourceRef="Activity_0o0gbni" targetRef="Event_18wmc0n" />
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_Order">
@@ -55,6 +66,18 @@
         <di:waypoint x="716" y="97" />
         <di:waypoint x="842" y="97" />
       </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1v070i0_di" bpmnElement="Flow_1v070i0">
+        <di:waypoint x="530" y="97" />
+        <di:waypoint x="560" y="97" />
+        <di:waypoint x="560" y="210" />
+        <di:waypoint x="590" y="210" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1qasi05_di" bpmnElement="Flow_1qasi05">
+        <di:waypoint x="690" y="210" />
+        <di:waypoint x="766" y="210" />
+        <di:waypoint x="766" y="97" />
+        <di:waypoint x="842" y="97" />
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
         <dc:Bounds x="179" y="79" width="36" height="36" />
         <bpmndi:BPMNLabel>
@@ -75,6 +98,9 @@
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_1i6nc92_di" bpmnElement="Activity_1y0merv">
         <dc:Bounds x="590" y="50" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1062j5a_di" bpmnElement="Activity_0o0gbni">
+        <dc:Bounds x="590" y="170" width="100" height="80" />
       </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
