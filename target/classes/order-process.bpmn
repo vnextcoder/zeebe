@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1qw49fq" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Zeebe Modeler" exporterVersion="0.9.1">
+  <bpmn:process id="Process_Order" name="Process Order" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1" name="Order Placed">
+      <bpmn:outgoing>Flow_0sf0gpw</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_0sf0gpw" sourceRef="StartEvent_1" targetRef="Activity_023cz5q" />
+    <bpmn:serviceTask id="Activity_023cz5q" name="Collect Money">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="payment-service" retries="3" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0sf0gpw</bpmn:incoming>
+      <bpmn:outgoing>Flow_1l2elbn</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_1l2elbn" sourceRef="Activity_023cz5q" targetRef="Activity_1n1vox3" />
+    <bpmn:serviceTask id="Activity_1n1vox3" name="Fetch Items">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="fetcher-service" retries="3" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1l2elbn</bpmn:incoming>
+      <bpmn:outgoing>Flow_10qk9eu</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_10qk9eu" sourceRef="Activity_1n1vox3" targetRef="Activity_1y0merv" />
+    <bpmn:serviceTask id="Activity_1y0merv" name="Ship Parcel">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="shipping-service" retries="3" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_10qk9eu</bpmn:incoming>
+      <bpmn:outgoing>Flow_1rhlq0g</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="Event_18wmc0n" name="Order Delivered">
+      <bpmn:incoming>Flow_1rhlq0g</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1rhlq0g" sourceRef="Activity_1y0merv" targetRef="Event_18wmc0n" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_Order">
+      <bpmndi:BPMNEdge id="Flow_0sf0gpw_di" bpmnElement="Flow_0sf0gpw">
+        <di:waypoint x="215" y="97" />
+        <di:waypoint x="270" y="97" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1l2elbn_di" bpmnElement="Flow_1l2elbn">
+        <di:waypoint x="370" y="97" />
+        <di:waypoint x="430" y="97" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_10qk9eu_di" bpmnElement="Flow_10qk9eu">
+        <di:waypoint x="530" y="97" />
+        <di:waypoint x="555" y="97" />
+        <di:waypoint x="555" y="90" />
+        <di:waypoint x="590" y="90" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1rhlq0g_di" bpmnElement="Flow_1rhlq0g">
+        <di:waypoint x="690" y="90" />
+        <di:waypoint x="716" y="90" />
+        <di:waypoint x="716" y="97" />
+        <di:waypoint x="842" y="97" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="179" y="79" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="165" y="122" width="65" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1qkpcwy_di" bpmnElement="Activity_023cz5q">
+        <dc:Bounds x="270" y="57" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1ne6n5c_di" bpmnElement="Activity_1n1vox3">
+        <dc:Bounds x="430" y="57" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_18wmc0n_di" bpmnElement="Event_18wmc0n">
+        <dc:Bounds x="842" y="79" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="821" y="122" width="78" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1i6nc92_di" bpmnElement="Activity_1y0merv">
+        <dc:Bounds x="590" y="50" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
