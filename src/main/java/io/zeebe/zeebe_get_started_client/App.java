@@ -15,7 +15,6 @@ import io.zeebe.client.api.worker.JobWorker;
  */
 public class App {
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
 
 		final ZeebeClient client = ZeebeClient.newClientBuilder()
 				// change the contact point if needed
@@ -29,19 +28,16 @@ public class App {
 		final int version = deployment.getWorkflows().get(0).getVersion();
 		System.out.println("Workflow deployed. Version: " + version);
 
-
 		final DeploymentEvent deployment2 = client.newDeployCommand().addResourceFromClasspath("cancel-process.bpmn")
 				.send().join();
 
 		final int version2 = deployment2.getWorkflows().get(0).getVersion();
 		System.out.println("Cancellation Workflow deployed. Version: " + version2);
 
-		
-
-		
-
 		final Map<String, Object> data = new HashMap<>();
 		data.put("orderId", 31243);
+		data.put("productId", 55883);
+		data.put("orderValue", 99993333);
 		data.put("orderItems", Arrays.asList(435, 182, 376));
 
 		final WorkflowInstanceEvent wfInstance = client.newCreateInstanceCommand().bpmnProcessId("Process_Order")
@@ -54,29 +50,33 @@ public class App {
 		final JobWorker jobWorker = client.newWorker().jobType("payment-service").handler((jobClient, job) -> {
 			final Map<String, Object> variables = job.getVariablesAsMap();
 
-			System.out.println("Process order: " + variables.get("orderId"));
+			System.out.println("Process Payment for order: " + variables.get("orderId"));
 			double price = 46.50;
 			System.out.println("Collect money: $" + price);
 
-			// ...
+			String PaymentStatus="OK";
+			System.out.println("Collect PaymentStatus: " + PaymentStatus);
+			
 
 			final Map<String, Object> result = new HashMap<>();
 			result.put("totalPrice", price);
-
+			result.put("PaymentStatus",PaymentStatus);
+			
 			jobClient.newCompleteCommand(job.getKey()).variables(result).send().join();
-		}).fetchVariables("orderId").open();
+		})
+		.fetchVariables("orderId")
+		.open();
 
-		final JobWorker jobWorker2 = client.newWorker().jobType("fetch-service").handler((jobClient, job) -> {
+		final JobWorker jobWorker2 = client.newWorker().jobType("fetcher-service").handler((jobClient, job) -> {
 			final Map<String, Object> variables = job.getVariablesAsMap();
 
-			System.out.println("Process order: " + variables.get("orderId"));
-			double price = 46.50;
-			System.out.println("Collect money: $" + price);
-
-			// ...
-
+			System.out.println("Fetch Service : " + variables.get("orderId"));
+			int qty=10;
+			System.out.println("Fetch Service : Available Qty " +  qty);
+			
 			final Map<String, Object> result = new HashMap<>();
-			result.put("totalPrice", price);
+			
+			result.put("availableQty", qty);
 
 			jobClient.newCompleteCommand(job.getKey()).variables(result).send().join();
 		}).fetchVariables("orderId").open();
@@ -84,52 +84,30 @@ public class App {
 		final JobWorker jobWorker3 = client.newWorker().jobType("shipping-service").handler((jobClient, job) -> {
 			final Map<String, Object> variables = job.getVariablesAsMap();
 
-			System.out.println("Process order: " + variables.get("orderId"));
+			System.out.println("Shipping order: " + variables.get("orderId"));
 			String shippingReference = "AWB003303";
-			System.out.println("Shipping Reference is : $" + shippingReference);
-
-			// ...
-
+			System.out.println("Shipping Reference is : " + shippingReference);
+			
 			final Map<String, Object> result = new HashMap<>();
 			result.put("shippingReference", shippingReference);
-
-			jobClient.newCompleteCommand(job.getKey()).variables(result).send().join();
-		}).fetchVariables("shippingReference").open();
-
-		
-		
-		/*
-		 * final WorkflowInstanceEvent wfCancellationInstance =
-		 * client.newCreateInstanceCommand().bpmnProcessId("Process_Cancellation")
-		 * .latestVersion().variables(data).send().join();
-		 * 
-		 * final long cancellationWorkflowInstanceKey =
-		 * wfCancellationInstance.getWorkflowInstanceKey();
-		 * System.out.println("Cancellation Workflow instance created. Key: " +
-		 * cancellationWorkflowInstanceKey);
-		 */		// ...
-
-		
-		
-		final JobWorker jobWorker4 = client.newWorker().jobType("Cancel_Order").handler((jobClient, job) -> {
-			final Map<String, Object> variables = job.getVariablesAsMap();
-
-			System.out.println("Process order: " + variables.get("orderId"));
-			double price = 46.50;
-			System.out.println("Collect money: $" + price);
-
-			// ...
-
-			final Map<String, Object> result = new HashMap<>();
-			result.put("totalPrice", price);
 
 			jobClient.newCompleteCommand(job.getKey()).variables(result).send().join();
 		}).fetchVariables("orderId").open();
 
 		
-		
-		client.close();
-		System.out.println("Closed.");
+		final JobWorker jobWorker4 = client.newWorker().jobType("Cancel_Order").handler((jobClient, job) -> {
+			final Map<String, Object> variables = job.getVariablesAsMap();
+
+			System.out.println("Cancelling order: " + variables.get("orderId"));
+			
+			final Map<String, Object> result = new HashMap<>();
+			result.put("cancellationStatus", true);
+
+			jobClient.newCompleteCommand(job.getKey()).variables(result).send().join();
+		}).fetchVariables("orderId").open();
+
+		// client.close();
+		// System.out.println("Closed.");
 
 	}
 }
